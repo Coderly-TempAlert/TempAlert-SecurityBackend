@@ -1,10 +1,10 @@
 using Infraestructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 //Comunication with MYSQL Database
@@ -14,6 +14,8 @@ builder.Services.AddDbContext<SecurityContext>(options =>
     options.UseMySql(conectionString, ServerVersion.AutoDetect(conectionString));
 });
 
+//Add identity service 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<SecurityContext>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -49,6 +51,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
+//Enable authentication and authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

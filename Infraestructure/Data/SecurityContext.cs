@@ -1,17 +1,17 @@
 ﻿using Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Infraestructure.Data;
 
-public class SecurityContext : DbContext
+public class SecurityContext : IdentityDbContext
 {
     public SecurityContext(DbContextOptions options) : base(options)
     {
     }
 
     public DbSet<User> User { get; set; }
-    public DbSet<Rol> Roles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
