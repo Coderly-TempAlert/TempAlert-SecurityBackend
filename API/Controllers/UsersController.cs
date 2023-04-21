@@ -1,4 +1,5 @@
 ﻿using API.Dtos;
+using API.Helpers.Errors;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,12 @@ public class UsersController : BaseApiController
     [HttpPost("register")]
     public async Task<IActionResult> AddUser(AddUserDto addUserDto)
     {
+        var existingEmail = await _userManager.FindByEmailAsync(addUserDto.Email);
+        if (existingEmail != null)
+        {
+            return BadRequest(new ApiResponse(400, new string[] { "The email already exist." }));
+        }
+
         var newUser = new User
         {
             Email = addUserDto.Email,
@@ -32,6 +39,16 @@ public class UsersController : BaseApiController
         };
         var result = await _userManager.CreateAsync(newUser, addUserDto.Password);
 
-        return Ok(result);
+        if(result.Errors.Any())
+        {
+            string[] errorMessages = result.Errors.Select(e => e.Description).ToArray();
+
+            return BadRequest(new ApiResponse(400, errorMessages));
+        }
+
+        return CreatedAtAction(nameof(AddUser), new
+        {
+            id = newUser.Id
+        });
     }
 }
