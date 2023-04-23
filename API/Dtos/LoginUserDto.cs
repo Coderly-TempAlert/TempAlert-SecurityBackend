@@ -1,6 +1,11 @@
-﻿namespace API.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API.Dtos;
+
+public class LoginUserDto
 {
-    public class LoginUserDto
-    {
-    }
+    [Required]
+    public string UserName { get; set; }
+    [Required]
+    public string Password { get; set; }
 }

@@ -1,8 +1,22 @@
+using API.Extensions;
 using Infraestructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Configuracion de AutoMapper para el mapeo de entidades a dtos y viceversa
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+//Configuracion para la limitacion de peticiones por un rango de tiempo
+builder.Services.ConfigureRateLimitiong();
+
+builder.Services.ConfigureCors();
+builder.Services.AddAplicacionServices();
+//Configuracion para el versionado de la API
+builder.Services.ConfigureApiVersioning();
+//Configurar JWT
+builder.Services.AddJwt(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllers();

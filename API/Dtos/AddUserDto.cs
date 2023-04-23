@@ -10,7 +10,7 @@ public class AddUserDto
     [Required]
     public string Names { get; set; }
     [Required]
-    public string LastName { get; set; }
+    public string PaternLastName { get; set; }
     [Required]
     public string MotherLastName { get; set; }
     [Required]
@@ -20,4 +20,5 @@ public class AddUserDto
     public string Password { get; set; }
     [Required]
     public string PhoneNumber { get; set; }
+
 }
