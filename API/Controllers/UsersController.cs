@@ -1,5 +1,6 @@
 ﻿using API.Dtos;
 using API.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -16,35 +17,6 @@ public class UsersController : BaseApiController
     [HttpPost("Register")]
     public async Task<IActionResult> AddUser(AddUserDto addUserDto)
     {
-        //var existingEmail = await _userManager.FindByEmailAsync(addUserDto.Email);
-        //if (existingEmail != null)
-        //{
-        //    return BadRequest(new ApiResponse(400, new string[] { "The email already exist." }));
-        //}
-
-        //var newUser = new User
-        //{
-        //    Email = addUserDto.Email,
-        //    PaternLastName = addUserDto.PaternLastName,
-        //    MotherLastName = addUserDto.MotherLastName,
-        //    Names = addUserDto.Names,
-        //    PhoneNumber = addUserDto.PhoneNumber,
-        //    UserName = addUserDto.UserName
-        //};
-        //var result = await _userManager.CreateAsync(newUser, addUserDto.Password);
-
-        //if(result.Errors.Any())
-        //{
-        //    string[] errorMessages = result.Errors.Select(e => e.Description).ToArray();
-
-        //    return BadRequest(new ApiResponse(400, errorMessages));
-        //}
-
-        //return CreatedAtAction(nameof(AddUser), new
-        //{
-        //    id = newUser.Id
-        //});
-
         var result = await _userService.AddUserAsync(addUserDto);
         return Ok(result);
     }
@@ -56,14 +28,6 @@ public class UsersController : BaseApiController
         SetRefreshTokenInCookie(result.RefreshToken);
         return Ok(result);
     }
-
-    [HttpPost("Rol")]
-    public async Task<IActionResult> AddRoleAsync(AddRolDto model)
-    {
-        var result = await _userService.AddRolAsync(model);
-        return Ok(result);
-    }
-
 
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken()

@@ -40,33 +40,46 @@ public class UserService : IUserService
 
         user.Password = _passwordHasher.HashPassword(user, addUserDto.Password);
 
-        var userExist = _unitOfWork.Users
+        var userExistWithUsername = _unitOfWork.Users
                                     .Find(u => u.UserName.ToLower() == addUserDto.UserName.ToLower())
                                     .FirstOrDefault();
 
-        if (userExist == null)
-        {
-            var defaultRol = _unitOfWork.Rols
-                                    .Find(u => u.Name == Authorization.default_rol.ToString())
-                                    .First();
-            try
-            {
-                user.Rols.Add(defaultRol);
-                _unitOfWork.Users.Add(user);
-                await _unitOfWork.SaveAsync();
+        if (userExistWithUsername != null)
+            return $"The user with username {userExistWithUsername.UserName} already exists";
 
-                return $"Sucessfully user {addUserDto.UserName} register";
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                return $"Error: {message}";
-            }
-        }
-        else
+
+        var userExistWithEmail = _unitOfWork.Users
+                                    .Find(u => u.Email == addUserDto.Email)
+                                    .FirstOrDefault();
+
+        if (userExistWithEmail != null)
+            return $"The user with email {userExistWithEmail.Email} already exists";
+
+
+        var userExistWithPhoneNumber = _unitOfWork.Users
+                            .Find(u => u.PhoneNumber == addUserDto.PhoneNumber)
+                            .FirstOrDefault();
+
+        if (userExistWithPhoneNumber != null)
+            return $"The user with phone number {userExistWithPhoneNumber.PhoneNumber} already exists";
+
+        var defaultRol = _unitOfWork.Rols
+                                .Find(u => u.Name == Authorization.default_rol.ToString())
+                                .First();
+        try
         {
-            return $"The user {addUserDto.UserName} is already registered";
+            user.Rols.Add(defaultRol);
+            _unitOfWork.Users.Add(user);
+            await _unitOfWork.SaveAsync();
+
+            return $"Sucessfully user {addUserDto.UserName} register";
         }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return $"Error: {message}";
+        }
+
     }
 
 
@@ -79,7 +92,7 @@ public class UserService : IUserService
         if (user == null)
         {
             userDataDto.IsAuthenticate = false;
-            userDataDto.Message = $"No existe ningún usuario con el username {model.UserName}.";
+            userDataDto.Message = $"There is no user with the username {model.UserName}.";
             return userDataDto;
         }
 
@@ -115,7 +128,7 @@ public class UserService : IUserService
             return userDataDto;
         }
         userDataDto.IsAuthenticate = false;
-        userDataDto.Message = $"Credenciales incorrectas para el usuario {user.UserName}.";
+        userDataDto.Message = $"Incorrect credentials for user {user.UserName}.";
         return userDataDto;
     }
 
