@@ -24,7 +24,7 @@ builder.Services.AddControllers();
 //Comunication with MYSQL Database
 builder.Services.AddDbContext<SecurityContext>(options =>
 {
-    var conectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var conectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION");
     options.UseMySql(conectionString, ServerVersion.AutoDetect(conectionString));
 });
 

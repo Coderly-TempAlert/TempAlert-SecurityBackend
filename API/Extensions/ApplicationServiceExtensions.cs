@@ -1,4 +1,5 @@
 ﻿using API.Helpers;
+using API.Helpers.Errors;
 using API.Service;
 using AspNetCoreRateLimit;
 using Core.Entities;
@@ -25,8 +26,6 @@ public static class ApplicationServiceExtensions
                 });
     public static void AddAplicacionServices(this IServiceCollection services)
     {
-        //services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
-        //services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -105,24 +104,24 @@ public static class ApplicationServiceExtensions
             });
     }
 
-    //public static void AddValidationErrors(this IServiceCollection services)
-    //{
-    //    services.Configure<ApiBehaviorOptions>(options =>
-    //    {
-    //        options.InvalidModelStateResponseFactory = actionContext =>
-    //        {
+    public static void AddValidationErrors(this IServiceCollection services)
+    {
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.InvalidModelStateResponseFactory = actionContext =>
+            {
 
-    //            var errors = actionContext.ModelState.Where(u => u.Value.Errors.Count > 0)
-    //                                            .SelectMany(u => u.Value.Errors)
-    //                                            .Select(u => u.ErrorMessage).ToArray();
+                var errors = actionContext.ModelState.Where(u => u.Value.Errors.Count > 0)
+                                                .SelectMany(u => u.Value.Errors)
+                                                .Select(u => u.ErrorMessage).ToArray();
 
-    //            var errorResponse = new ApiValidation()
-    //            {
-    //                Errors = errors
-    //            };
+                var errorResponse = new ApiValidation()
+                {
+                    Errors = errors
+                };
 
-    //            return new BadRequestObjectResult(errorResponse);
-    //        };
-    //    });
-    //}
+                return new BadRequestObjectResult(errorResponse);
+            };
+        });
+    }
 }
