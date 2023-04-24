@@ -21,10 +21,13 @@ builder.Services.AddJwt(builder.Configuration);
 // Add services to the container.
 builder.Services.AddControllers();
 
+//Manejo de errores del model state(Anotaciones como Required, Email, etc)
+builder.Services.AddValidationErrors();
+
 //Comunication with MYSQL Database
 builder.Services.AddDbContext<SecurityContext>(options =>
 {
-    var conectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION");
+    var conectionString = Environment.GetEnvironmentVariable("TEMPALERT_SECURITY_DATABASE_CONNECTION");
     options.UseMySql(conectionString, ServerVersion.AutoDetect(conectionString));
 });
 
