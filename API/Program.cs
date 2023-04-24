@@ -40,31 +40,34 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-//Database migration
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-    try
+    //Database migration
+    using (var scope = app.Services.CreateScope())
     {
-        var context = services.GetRequiredService<SecurityContext>();
-        await context.Database.MigrateAsync();
-        await SecurityContextSeed.SeedRolsAsync(context, loggerFactory);
-    }
-    catch (Exception ex)
-    {
-        var _logger = loggerFactory.CreateLogger<Program>();
-        _logger.LogError(ex, "Ocurrio un error durante la migracion");
+        var services = scope.ServiceProvider;
+        var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+        try
+        {
+            var context = services.GetRequiredService<SecurityContext>();
+            await context.Database.MigrateAsync();
+            await SecurityContextSeed.SeedRolsAsync(context, loggerFactory);
+        }
+        catch (Exception ex)
+        {
+            var _logger = loggerFactory.CreateLogger<Program>();
+            _logger.LogError(ex, "Ocurrio un error durante la migracion");
+        }
     }
 }
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
