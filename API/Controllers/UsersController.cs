@@ -25,7 +25,8 @@ public class UsersController : BaseApiController
     public async Task<IActionResult> LoginUserAsync(LoginUserDto loginUserDto)
     {
         var result = await _userService.LoginUserAsync(loginUserDto);
-        SetRefreshTokenInCookie(result.RefreshToken);
+        if(result.IsAuthenticate)
+            SetRefreshTokenInCookie(result.RefreshToken);
         return Ok(result);
     }
 
