@@ -128,7 +128,7 @@ public class UserService : IUserService
             return userDataDto;
         }
         userDataDto.IsAuthenticate = false;
-        userDataDto.Message = $"Incorrect credentials for user {user.UserName}.";
+        userDataDto.Message = $"Incorrect password for user {user.UserName}.";
         return userDataDto;
     }
 
